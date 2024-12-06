@@ -33,7 +33,7 @@ def calcular_polinomio_caracteristico(elementos):
 
 # Usamos un método integrado de bisección y Newton para buscar raíces del polinomio característico que corresponden a valores propios de la matriz
 # Esencialmente buscamos cambios de signo y aplicamos Newton para intentar hallar rápidamente una raíz en el intervalo dado, si no funciona, aplicamos bisección y repetimos el proceso
-def encontrar_raices_biseccion_newton(polinomio, a, b, iter_Newton, max_iter_biseccion, tolerancia):
+def encontrar_raices_biseccion_newton(polinomio, a, b, iter_Newton=10, max_iter_biseccion=20, tolerancia=1e-10):
 
     # Parámetros de entrada al algoritmo de búsqueda de raíces de polinomios
     # polinomio: Polinomio a encontrar raíces, pase como parámetro el método calcular_polinomio_caracteristico(A) que retorna el polinomio de la matriz A 
