@@ -52,5 +52,46 @@ class QRDecomposition :
                 Q[:, j] = v / R[j, j]
             else:
                 Q[:, j] = 0  # Si no es posible normalizar, asignar ceros
-        
+    
         return Q, R
+
+    def qr_factorization_householder(self, A):
+        """
+        Realiza la descomposición QR usando reflexiones de Householder.
+
+        Parámetros:
+        A (numpy.ndarray): Matriz cuadrada de entrada.
+
+        Retorna:
+        tuple: Matrices Q (ortogonal) y R (triangular superior).
+        """
+        import numpy as np
+
+        n = A.shape[0]
+        Q = np.eye(n)  # Matriz identidad para construir Q
+        R = A.copy()
+
+        for k in range(n - 1):
+            # Crear el vector de Householder
+            x = R[k:, k]
+            e1 = np.zeros_like(x)
+            e1[0] = np.linalg.norm(x)
+            v = x - e1
+            norm_v = np.linalg.norm(v)
+
+            # Evitar división por cero
+            if norm_v > 1e-10:  # Si la norma es suficientemente grande
+                v /= norm_v  # Normalizar v
+            else:
+                v = np.zeros_like(v)  # Si no, asignar ceros a v
+
+            # Construir la matriz de reflexión H
+            H_k = np.eye(n)
+            H_k[k:, k:] -= 2.0 * np.outer(v, v)
+
+            # Actualizar R y Q
+            R = H_k @ R
+            Q = Q @ H_k.T
+
+        return Q, R
+
