@@ -6,9 +6,9 @@ from sympy import symbols, Matrix, pretty, diff, div, factor
 
 def calcular_polinomio_caracteristico(elementos: np.matrix):
 
+    # Ingrese una matriz A cuadrada de nxn en formato numpy como lista de filas : A = np.matrix([[fila_1],[fila_2],...,[fila_n]])
+    
     elementos = elementos.tolist()
-
-    # Ingrese una matriz A cuadrada de nxn en formato lista de filas : A = [[fila_1],[fila_2],...,[fila_n]]
 
     # Verificar que la matriz sea cuadrada
     if not all(len(fila) == len(elementos) for fila in elementos):
@@ -39,7 +39,8 @@ def calcular_polinomio_caracteristico(elementos: np.matrix):
 def encontrar_raices_biseccion_newton(A: np.matrix, a, b, iter_Newton=10, max_iter_biseccion=20, tolerancia=1e-10):
 
     # Parámetros de entrada al algoritmo de búsqueda de raíces de polinomios
-    # polinomio: Polinomio a encontrar raíces, pase como parámetro el método calcular_polinomio_caracteristico(A) que retorna el polinomio de la matriz A 
+
+    # Ingrese una matriz A cuadrada de nxn en formato numpy como lista de filas : A = np.matrix([[fila_1],[fila_2],...,[fila_n]])
     # a,b : Los extremos del intervalo donde se buscarán raíces.
     # iter_Newton : Parámetro para indicar el número de iteraciones máximas que hará el método de Newton para intentar hallar una raíz
     # max_iter_biseccion : Número máximo de bisecciones que hará el algoritmo para hallar raíces en el intervalo
@@ -159,8 +160,8 @@ def encontrar_raices_biseccion_newton(A: np.matrix, a, b, iter_Newton=10, max_it
 
 
 # Ejemplo de uso
-#matriz = [[1,1,2], [2,1,1],[1,1,3]]
-#raices = encontrar_raices_biseccion_newton(calcular_polinomio_caracteristico(matriz), a=-10, b=100, iter_Newton=5, max_iter_biseccion=10, tolerancia=0.1)
+#matriz = np.matrix([[1,1,2], [2,1,1],[1,1,3]])
+#raices = encontrar_raices_biseccion_newton(matriz, a=-10, b=100, iter_Newton=5, max_iter_biseccion=10, tolerancia=0.1)
 
 
 
