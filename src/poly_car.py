@@ -36,7 +36,7 @@ def calcular_polinomio_caracteristico(elementos: np.matrix):
 
 # Usamos un método integrado de bisección y Newton para buscar raíces del polinomio característico que corresponden a valores propios de la matriz
 # Esencialmente buscamos cambios de signo y aplicamos Newton para intentar hallar rápidamente una raíz en el intervalo dado, si no funciona, aplicamos bisección y repetimos el proceso
-def encontrar_raices_biseccion_newton(polinomio, a, b, iter_Newton=10, max_iter_biseccion=20, tolerancia=1e-10):
+def encontrar_raices_biseccion_newton(A: np.matrix, a, b, iter_Newton=10, max_iter_biseccion=20, tolerancia=1e-10):
 
     # Parámetros de entrada al algoritmo de búsqueda de raíces de polinomios
     # polinomio: Polinomio a encontrar raíces, pase como parámetro el método calcular_polinomio_caracteristico(A) que retorna el polinomio de la matriz A 
@@ -49,6 +49,8 @@ def encontrar_raices_biseccion_newton(polinomio, a, b, iter_Newton=10, max_iter_
     if a >= b:
       print("Error en los parámetros de entrada, verifique el intervalo de búsqueda")
       return None
+
+    polinomio = calcular_polinomio_caracteristico(A)
 
     # Crear el símbolo lambda
     lambda_symbol = symbols('lambda')

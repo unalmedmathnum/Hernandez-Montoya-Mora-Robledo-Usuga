@@ -1,5 +1,5 @@
 class QRDecomposition :
-    def __init__(self, A, max_iter=1000, tol=1e-10, method=0, use_shift=False, plot_log=True, use_hessenberg=True) -> None:
+    def __init__(self, A, max_iter=1000, tol=0.1, method=0, use_shift=True, plot_log=True, use_hessenberg=True) -> None:
         """
         Inicializa los parámetros para realizar la descomposición QR.
 
@@ -31,24 +31,19 @@ class QRDecomposition :
         import numpy as np
 
         # Transformar la matriz A a forma de Hessenberg antes del proceso QR
-        if self.use_hessenberg :
+        if self.use_hessenberg:
             Ak = self.transform_to_hessenberg()
-        else :
+        else:
             Ak = self.A.copy()  # Copia de la matriz A para no modificar la original
 
         n = self.A.shape[0]
-        
+        apply_shift = True  # Indicador para usar desplazamiento espectral
+
         for i in range(self.max_iter):
-            # Desplazamiento espectral
-            if self.use_shift:
-                # Si la pérdida aumenta, desactiva el desplazamiento espectral
-                if i > 1 and self.loss_history[-1] > self.loss_history[-2]:
-                    mu = 0
-                else:
-                    # Selección de desplazamiento espectral
-                    # mu = Ak[-1, -1]  # Diagonal inferior derecha
-                    mu = Ak.diagonal().max()  # Máximo de la diagonal
-                    Ak -= mu * np.eye(n)  # Restar mu * I
+            # Desplazamiento espectral adaptativo
+            if self.use_shift and apply_shift:
+                mu = Ak.diagonal().max()  # Máximo de la diagonal
+                Ak -= mu * np.eye(n)  # Restar mu * I
             else:
                 mu = 0  # Sin desplazamiento
 
@@ -67,15 +62,25 @@ class QRDecomposition :
             off_diagonal_norm = np.sqrt(np.sum(np.triu(Ak, k=1)**2))
             self.loss_history.append(off_diagonal_norm)
 
+            # Verificar mejora en el error
+            if len(self.loss_history) > 1:
+                if self.loss_history[-1] >= self.loss_history[-2]:  # Error no mejora
+                    apply_shift = not apply_shift  # Alternar el desplazamiento
+                else:
+                    apply_shift = True  # Rehabilitar el desplazamiento si mejora
+
             # Verificar convergencia
             if off_diagonal_norm < self.tol:
                 self.plot_loss()
                 eigenvalues = np.diag(Ak)  # Extraer los valores propios aproximados
+                print("Valores propios encontrados:")
+                print(f"\t{', '.join([str(round(e, 2)) for e in eigenvalues])}.")
                 return eigenvalues.tolist()
-        
+
         # Si no converge, graficar la pérdida y lanzar excepción
         self.plot_loss()
         raise Exception("ERROR: El método no converge para esta matriz.")
+
 
     def qr_factorization_gram_schmidt(self, A):
         """
