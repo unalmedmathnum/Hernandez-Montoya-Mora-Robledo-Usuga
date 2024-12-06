@@ -79,6 +79,9 @@ class QRDecomposition :
 
         # Si no converge, graficar la pérdida y lanzar excepción
         self.plot_loss()
+        eigenvalues = np.diag(Ak)  # Extraer los valores propios aproximados
+        print("Valores propios aproxiamdos:")
+        print(f"\t{', '.join([str(round(e, 2)) for e in eigenvalues])}.")
         raise Exception("ERROR: El método no converge para esta matriz.")
 
 

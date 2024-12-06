@@ -1,6 +1,8 @@
 import numpy as np
 
-def power_method(A, max_iter=100, tolerance=1e-6):
+def power_method(A:np.matrix, max_iter=100, tolerance=1e-6):
+    A = np.array(A.tolist())
+
     n = A.shape[0]
 
     # Vector inicial aleatorio
