@@ -1,5 +1,5 @@
 class QRDecomposition :
-    def __init__(self, A, max_iter=1000, tol=0.1, method=0, use_shift=True, plot_log=True, use_hessenberg=True) -> None:
+    def __init__(self, A, max_iter=1000, tol=1e-10, method=0, use_shift=True, plot_log=True, use_hessenberg=True) -> None:
         """
         Inicializa los parámetros para realizar la descomposición QR.
 
@@ -200,7 +200,7 @@ reflexiones de Householder.
         if not self.loss_history:
             raise Exception("No hay datos de pérdida disponibles. Ejecuta 'main' primero.")
         
-        print(min(self.loss_history))  # Imprimir el valor mínimo de la pérdida
+        #print(min(self.loss_history))  # Imprimir el valor mínimo de la pérdida
 
         plt.figure(figsize=(8, 6))
         plt.plot(self.loss_history, marker='o', linestyle='-')
