@@ -1,9 +1,12 @@
+import numpy as np
 from sympy import symbols, Matrix, pretty, diff, div, factor
 
 
 # Calculamos simbólicamente el polinomio característico de la matriz y se retorna para aplicarlo en la búsqueda de raíces
 
-def calcular_polinomio_caracteristico(elementos):
+def calcular_polinomio_caracteristico(elementos: np.matrix):
+
+    elementos = elementos.tolist()
 
     # Ingrese una matriz A cuadrada de nxn en formato lista de filas : A = [[fila_1],[fila_2],...,[fila_n]]
 
