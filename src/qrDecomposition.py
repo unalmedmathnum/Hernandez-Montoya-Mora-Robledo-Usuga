@@ -95,3 +95,23 @@ class QRDecomposition :
 
         return Q, R
 
+    def plot_loss(self):
+        """
+        Genera una gráfica de la pérdida (norma fuera de la diagonal) a lo largo de las iteraciones.
+        """
+        import matplotlib.pyplot as plt
+
+        if not self.loss_history:
+            raise Exception("No hay datos de pérdida disponibles. Ejecuta 'main' primero.")
+        
+        print(min(self.loss_history))  # Imprimir el valor mínimo de la pérdida
+
+        plt.figure(figsize=(8, 6))
+        plt.plot(self.loss_history, marker='o', linestyle='-')
+        plt.title("Pérdida (Norma fuera de la diagonal) vs Iteraciones")
+        plt.xlabel("Iteraciones")
+        plt.ylabel("Pérdida (Norma)")
+        if self.plot_log:  # Escala logarítmica opcional
+            plt.yscale('log')
+        plt.grid(True)
+        plt.show()
