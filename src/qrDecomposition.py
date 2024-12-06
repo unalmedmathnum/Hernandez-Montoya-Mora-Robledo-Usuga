@@ -21,8 +21,61 @@ class QRDecomposition :
         self.plot_log = plot_log  # Usar escala logarítmica en la gráfica
         self.use_hessenberg = use_hessenberg # Usar la transformación de Hessenberg
 
-    def main(self) :
-        pass
+    def main(self):
+        """
+        Ejecuta el método QR iterativo para aproximar los valores propios de una matriz.
+
+        Retorna:
+        list: Lista con los valores propios aproximados.
+        """
+        import numpy as np
+
+        # Transformar la matriz A a forma de Hessenberg antes del proceso QR
+        if self.use_hessenberg :
+            Ak = self.transform_to_hessenberg()
+        else :
+            Ak = self.A.copy()  # Copia de la matriz A para no modificar la original
+
+        n = self.A.shape[0]
+        
+        for i in range(self.max_iter):
+            # Desplazamiento espectral
+            if self.use_shift:
+                # Si la pérdida aumenta, desactiva el desplazamiento espectral
+                if i > 1 and self.loss_history[-1] > self.loss_history[-2]:
+                    mu = 0
+                else:
+                    # Selección de desplazamiento espectral
+                    # mu = Ak[-1, -1]  # Diagonal inferior derecha
+                    mu = Ak.diagonal().max()  # Máximo de la diagonal
+                    Ak -= mu * np.eye(n)  # Restar mu * I
+            else:
+                mu = 0  # Sin desplazamiento
+
+            # Descomposición QR según el método seleccionado
+            if self.method == 0:
+                Q, R = self.qr_factorization_gram_schmidt(Ak)
+            elif self.method == 1:
+                Q, R = self.qr_factorization_householder(Ak)
+            else:
+                raise ValueError("Método inválido. Usa 'gram-schmidt' o 'householder'.")
+
+            # Actualizar la matriz A
+            Ak = R @ Q + mu * np.eye(n)  # Restaurar desplazamiento espectral si se aplicó
+
+            # Calcular la norma fuera de la diagonal (pérdida)
+            off_diagonal_norm = np.sqrt(np.sum(np.triu(Ak, k=1)**2))
+            self.loss_history.append(off_diagonal_norm)
+
+            # Verificar convergencia
+            if off_diagonal_norm < self.tol:
+                self.plot_loss()
+                eigenvalues = np.diag(Ak)  # Extraer los valores propios aproximados
+                return eigenvalues.tolist()
+        
+        # Si no converge, graficar la pérdida y lanzar excepción
+        self.plot_loss()
+        raise Exception("ERROR: El método no converge para esta matriz.")
 
     def qr_factorization_gram_schmidt(self, A):
         """
