@@ -1,0 +1,56 @@
+class QRDecomposition :
+    def __init__(self, A, max_iter=1000, tol=1e-10, method=0, use_shift=False, plot_log=True, use_hessenberg=True) -> None:
+        """
+        Inicializa los parámetros para realizar la descomposición QR.
+
+        Parámetros:
+        - A (numpy.ndarray): Matriz cuadrada de entrada.
+        - max_iter (int): Número máximo de iteraciones.
+        - tol (float): Tolerancia para determinar la convergencia.
+        - method (int): Método para QR (0: Gram-Schmidt, 1: Householder).
+        - use_shift (bool): Activar o desactivar desplazamiento espectral.
+        - plot_log (bool): Si True, la gráfica de pérdida usa escala logarítmica.
+        """
+        
+        self.A = A.astype(float)  # Convertir la matriz A a tipo float
+        self.max_iter = max_iter
+        self.tol = tol
+        self.loss_history = []  # Historial de pérdida (norma fuera de la diagonal)
+        self.method = method  # Método QR seleccionado
+        self.use_shift = use_shift  # Desplazamiento espectral activado/desactivado
+        self.plot_log = plot_log  # Usar escala logarítmica en la gráfica
+        self.use_hessenberg = use_hessenberg # Usar la transformación de Hessenberg
+
+    def main(self) :
+        pass
+
+    def qr_factorization_gram_schmidt(self, A):
+        """
+        Realiza la descomposición QR usando el método de Gram-Schmidt.
+
+        Parámetros:
+        A (numpy.ndarray): Matriz cuadrada de entrada.
+
+        Retorna:
+        tuple: Matrices Q (ortogonal) y R (triangular superior).
+        """
+        import numpy as np
+
+        n = A.shape[0]
+        Q = np.zeros_like(A, dtype=float)  # Inicializa Q
+        R = np.zeros((n, n), dtype=float)  # Inicializa R
+        
+        for j in range(n):
+            v = A[:, j].astype(float).copy()  # Copiar la columna actual
+            for i in range(j):
+                # Proyección de la columna actual sobre las columnas anteriores
+                R[i, j] = np.dot(Q[:, i].A1, A[:, j].A1)
+                v -= R[i, j] * Q[:, i]
+            R[j, j] = np.linalg.norm(v)  # Calcular la norma
+
+            if R[j, j] > 1e-10:  # Evitar división por cero
+                Q[:, j] = v / R[j, j]
+            else:
+                Q[:, j] = 0  # Si no es posible normalizar, asignar ceros
+        
+        return Q, R
