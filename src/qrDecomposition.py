@@ -94,6 +94,41 @@ class QRDecomposition :
             Q = Q @ H_k.T
 
         return Q, R
+        
+    def transform_to_hessenberg(self):
+        """
+        Transforma la matriz A a su forma de Hessenberg usando
+reflexiones de Householder.
+
+        Retorna:
+        numpy.ndarray: Matriz en forma de Hessenberg.
+        """
+        import numpy as np
+
+        n = self.A.shape[0]
+        H = self.A.copy()  # Copia de la matriz para no modificar la original
+
+        for k in range(n - 2):
+            # Crear el vector de Householder para la columna k
+            x = H[k+1:, k]
+            e1 = np.zeros_like(x)
+            e1[0] = np.linalg.norm(x)
+            v = x - e1
+            norm_v = np.linalg.norm(v)
+
+            if norm_v > 1e-10:  # Evitar división por cero
+                v /= norm_v
+            else:
+                continue  # Saltar si no se necesita la reflexión
+
+            # Construir la matriz de reflexión
+            H_k = np.eye(n)
+            H_k[k+1:, k+1:] -= 2.0 * np.outer(v, v)
+
+            # Aplicar la transformación a la matriz H
+            H = H_k @ H @ H_k.T
+
+        return H
 
     def plot_loss(self):
         """
